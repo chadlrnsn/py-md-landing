@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Markdown Landing</title>
+        <link
+            href="{{ url_for('static', filename='css/main.css') }}"
+            rel="stylesheet"
+        />
+        <style>
+            /* Стили Pygments */
+            {{ pygments_css | safe }}
+
+            /* Кастомизация цветов для светлой/темной темы */
+            .highlight {
+                background: transparent !important;
+            }
+
+            /* Светлая тема - делаем все цвета темнее */
+            .highlight .n { color: #1f2937 !important; } /* имена - темно-серый */
+            .highlight .p { color: #1f2937 !important; } /* пунктуация */
+            .highlight .k { color: #0369a1 !important; } /* ключевые слова - темно-синий */
+            .highlight .s { color: #047857 !important; } /* строки - темно-зеленый */
+            .highlight .c1 { color: #4b5563 !important; } /* комментарии - средне-серый */
+            .highlight .o { color: #1f2937 !important; } /* операторы */
+            .highlight .m { color: #0369a1 !important; } /* числа */
+            .highlight .s1 { color: #047857 !important; } /* строки в кавычках */
+            .highlight .s2 { color: #047857 !important; } /* строки в двойных кавычках */
+            .highlight .nt { color: #0369a1 !important; } /* теги HTML */
+            .highlight .na { color: #1f2937 !important; } /* атрибуты */
+
+            /* Темная тема */
+            .dark .highlight .n { color: #e5e7eb !important; }
+            .dark .highlight .p { color: #e5e7eb !important; }
+            .dark .highlight .k { color: #38bdf8 !important; }
+            .dark .highlight .s { color: #34d399 !important; }
+            .dark .highlight .c1 { color: #9ca3af !important; }
+            .dark .highlight .o { color: #e5e7eb !important; }
+
+            /* Остальные стили остаются без изменений */
+            .highlight pre { margin: 0; }
+            .prose :where(pre):not(:where([class~="not-prose"] *)) {
+                margin: 0;
+                padding: 0;
+            }
+            .prose pre {
+                background-color: transparent !important;
+            }
+            .prose pre code {
+                padding: 0 !important;
+            }
+            .prose pre.highlight {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .code-container {
+                background-color: rgb(243 244 246) !important;
+            }
+            .dark .code-container {
+                background-color: rgb(31 41 55) !important;
+            }
+
+            /* Дополнительные стили для подсветки синтаксиса */
+            .highlight .hll { background-color: transparent }
+            .highlight .c { color: #75715e } /* Comment */
+            .highlight .err { color: #960050; background-color: transparent } /* Error */
+            .highlight .k { color: #66d9ef } /* Keyword */
+            .highlight .l { color: #ae81ff } /* Literal */
+            .highlight .n { color: #f8f8f2 } /* Name */
+            .highlight .o { color: #f92672 } /* Operator */
+            .highlight .p { color: #f8f8f2 } /* Punctuation */
+            .highlight .cm { color: #75715e } /* Comment.Multiline */
+            .highlight .cp { color: #75715e } /* Comment.Preproc */
+            .highlight .c1 { color: #75715e } /* Comment.Single */
+            .highlight .cs { color: #75715e } /* Comment.Special */
+            .highlight .ge { font-style: italic } /* Generic.Emph */
+            .highlight .gs { font-weight: bold } /* Generic.Strong */
+        </style>
+        <script>
+            // Проверяем предпочтения пользователя
+            if (
+                localStorage.theme === "dark" ||
+                (!("theme" in localStorage) &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches)
+            ) {
+                document.documentElement.classList.add("dark");
+            } else {
+                document.documentElement.classList.remove("dark");
+            }
+        </script>
+    </head>
+    <body class="bg-white dark:bg-gray-900 transition-colors duration-200">
+        <div class="container mx-auto px-4 py-8">
+            <button
+                id="theme-toggle"
+                class="fixed top-4 right-4 p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+                onclick="toggleTheme()"
+            >
+                <svg
+                    class="w-6 h-6 hidden dark:block"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                >
+                    <!-- Иконка солнца -->
+                    <path
+                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                    />
+                </svg>
+                <svg
+                    class="w-6 h-6 block dark:hidden"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                >
+                    <!-- Иконка луны -->
+                    <path
+                        d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+                    />
+                </svg>
+            </button>
+            <div id="content" class="prose prose-lg dark:prose-dark max-w-none">
+                {{ content | safe }}
+            </div>
+        </div>
+        <script>
+            function toggleTheme() {
+                if (document.documentElement.classList.contains("dark")) {
+                    document.documentElement.classList.remove("dark");
+                    localStorage.theme = "light";
+                } else {
+                    document.documentElement.classList.add("dark");
+                    localStorage.theme = "dark";
+                }
+            }
+
+            // Функция для копирования текста
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(
+                    () => {
+                        // Успешно скопировано
+                    },
+                    (err) => {
+                        console.error("Ошибка копирования:", err);
+                    }
+                );
+            }
+
+            // Обработка блоков кода
+            function setupCodeBlocks() {
+                // Ищем все pre элементы
+                const preBlocks = document.querySelectorAll("pre");
+
+                preBlocks.forEach((preBlock) => {
+                    // Пропускаем, если блок уже обработан
+                    if (preBlock.closest(".relative.group")) return;
+
+                    // Создаем контейнер для блока кода
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "relative group";
+
+                    preBlock.classList.add(
+                        "!bg-transparent",
+                        "shadow-lg",
+                        "relative",
+                        "rounded-lg",
+                        "!p-0"
+                    );
+
+                    // Находим элемент code внутри pre
+                    const codeBlock =
+                        preBlock.querySelector("code") || preBlock;
+
+                    // Добавляем панель с информацией о языке и кнопкой копирования
+                    const header = document.createElement("div");
+                    header.className =
+                        "flex justify-between items-center px-4 py-2 bg-gray-300 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm rounded-t-lg border-b border-gray-400 dark:border-gray-700";
+
+                    // Определяем язык из класса
+                    let language = "text";
+                    if (codeBlock.classList) {
+                        const langClass = Array.from(codeBlock.classList).find(
+                            (cls) => cls.startsWith("language-")
+                        );
+                        if (langClass) {
+                            language = langClass.replace("language-", "");
+                        }
+                    }
+
+                    header.innerHTML = `
+                        <span class="font-mono">${language}</span>
+                        <button class="copy-button opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 rounded bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                            </svg>
+                        </button>
+                    `;
+
+                    // Добавляем обработчик копирования
+                    const copyButton = header.querySelector(".copy-button");
+                    copyButton.addEventListener("click", () => {
+                        copyToClipboard(codeBlock.textContent);
+
+                        const originalContent = copyButton.innerHTML;
+                        copyButton.innerHTML = `
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        `;
+                        setTimeout(() => {
+                            copyButton.innerHTML = originalContent;
+                        }, 2000);
+                    });
+
+                    // Оборачиваем код в контейнер с отступами
+                    const codeContainer = document.createElement("div");
+                    codeContainer.className =
+                        "p-4 overflow-x-auto bg-gray-50 dark:bg-gray-900 rounded-b-lg";
+
+                    // Собираем всё вместе
+                    preBlock.parentNode.insertBefore(wrapper, preBlock);
+                    wrapper.appendChild(header);
+                    wrapper.appendChild(codeContainer);
+                    codeContainer.appendChild(preBlock);
+                });
+            }
+
+            // Группировка контента между h1 и h2
+            document.addEventListener("DOMContentLoaded", function () {
+                const content = document.getElementById("content");
+
+                // Сначала обрабатываем блоки кода
+                setupCodeBlocks();
+
+                // Затем группируем контент
+                const h1s = content.getElementsByTagName("h1");
+                const h1Array = Array.from(h1s);
+
+                h1Array.forEach((h1) => {
+                    // Основная секция h1 - более светлый серый
+                    const mainSection = document.createElement("div");
+                    mainSection.className =
+                        "bg-gray-100 dark:bg-gray-800 rounded-lg p-6 mb-8 shadow-lg";
+
+                    // Перемещаем h1 в секцию
+                    h1.parentNode.insertBefore(mainSection, h1);
+                    mainSection.appendChild(h1);
+
+                    // Временный контейнер для сбора контента
+                    const tempContainer = document.createElement("div");
+
+                    // Собираем все элементы до следующего h1
+                    let nextElement = mainSection.nextSibling;
+                    while (nextElement && nextElement.tagName !== "H1") {
+                        const elementToMove = nextElement;
+                        nextElement = nextElement.nextSibling;
+                        tempContainer.appendChild(elementToMove);
+                    }
+
+                    // Обрабатываем h2 внутри собранного контента
+                    const h2s = tempContainer.getElementsByTagName("h2");
+                    const h2Array = Array.from(h2s);
+
+                    if (h2Array.length > 0) {
+                        h2Array.forEach((h2) => {
+                            // Подсекция h2 - чуть темнее серый
+                            const subSection = document.createElement("div");
+                            subSection.className =
+                                "bg-gray-200 dark:bg-gray-700/50 rounded-lg p-4 mb-4";
+
+                            // Находим следующий h2 или конец контента
+                            let h2Content = document.createElement("div");
+                            let currentNode = h2.nextSibling;
+
+                            while (
+                                currentNode &&
+                                currentNode.tagName !== "H2"
+                            ) {
+                                const nodeToMove = currentNode;
+                                currentNode = currentNode.nextSibling;
+                                h2Content.appendChild(nodeToMove);
+                            }
+
+                            // Добавляем h2 и его контент в подсекцию
+                            subSection.appendChild(h2);
+                            subSection.appendChild(h2Content);
+                            mainSection.appendChild(subSection);
+                        });
+                    } else {
+                        // Если нет h2, просто добавляем весь контент в основную секцию
+                        while (tempContainer.firstChild) {
+                            mainSection.appendChild(tempContainer.firstChild);
+                        }
+                    }
+                });
+
+                // Повторно обрабатываем блоки кода после группировки
+                setupCodeBlocks();
+            });
+        </script>
+    </body>
+</html>
